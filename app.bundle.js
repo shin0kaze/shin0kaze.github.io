@@ -123,7 +123,7 @@ var OptionsScene = function (_Phaser$Scene) {
       this.text = this.add.text(300, 100, 'Options', { fontSize: 40 });
       var ui = this.cache.json.get('locale').ui;
 
-      this.musicCheck = new _checkbox.Checkbox(this, 200, 300, chkTexture, function () {}, ui.btnPlay);
+      this.musicCheck = new _checkbox.Checkbox(this, 200, 300, chkTexture, function () {}, ui.chkMusic);
       this.add.existing(this.musicCheck);
 
       this.soundCheck = new _checkbox.Checkbox(this, 200, 400, chkTexture, function () {}, ui.btnPlay);
@@ -131,12 +131,12 @@ var OptionsScene = function (_Phaser$Scene) {
 
       this.saveOptButton = new _button.Button(this, 100, 500, btnTexture, function () {
         _this2.scene.start('Title');
-      }, ui.btnPlay);
+      }, ui.btnSave);
       this.add.existing(this.saveOptButton);
 
       this.cancelOptButton = new _button.Button(this, 250, 500, btnTexture, function () {
         _this2.scene.start('Title');
-      }, ui.btnPlay);
+      }, ui.btnCancel);
       this.add.existing(this.cancelOptButton);
     }
   }]);
@@ -173,51 +173,32 @@ var Checkbox = exports.Checkbox = function (_Phaser$GameObjects$I) {
   function Checkbox(scene, x, y, spritesheet, callback, text) {
     _classCallCheck(this, Checkbox);
 
-    var _this = _possibleConstructorReturn(this, (Checkbox.__proto__ || Object.getPrototypeOf(Checkbox)).call(this, scene, x, y, spritesheet, 2));
+    var _this = _possibleConstructorReturn(this, (Checkbox.__proto__ || Object.getPrototypeOf(Checkbox)).call(this, scene, x, y, spritesheet, 3));
 
     _this.caption = null;
+    _this.checked = false;
     if (text != '') {
       _this.caption = scene.add.text(x, y, text, { fill: '#0ff' });
       _this.caption.setDepth(1);
-      _this.caption.setOrigin(0.5, 0.5);
-      _this.caption.bounds = _this.caption.getBounds();
+      _this.caption.setOrigin(0, 0.5);
+      _this.x = x + _this.caption.width + 20;
     }
-    _this.setInteractive({ useHandCursor: true }).on('pointerover', function () {
-      return _this.hover();
-    }).on('pointerout', function () {
-      return _this.release();
-    }).on('pointerdown', function () {
-      return _this.press();
-    }).on('pointerup', function () {
-      _this.hover();
+    _this.setInteractive({ useHandCursor: true }).on('pointerup', function () {
+      _this.check();
       callback();
     });
     return _this;
   }
 
   _createClass(Checkbox, [{
-    key: 'hover',
-    value: function hover() {
-      this.setFrame(3);
-      if (this.caption != null) {
-        this.caption.setStyle({ fill: '#0f0' });
+    key: 'check',
+    value: function check() {
+      if (this.checked) {
+        this.setFrame(3);
+      } else {
+        this.setFrame(0);
       }
-    }
-  }, {
-    key: 'release',
-    value: function release() {
-      this.setFrame(2);
-      if (this.caption != null) {
-        this.caption.setStyle({ fill: '#0ff' });
-      }
-    }
-  }, {
-    key: 'press',
-    value: function press() {
-      this.setFrame(1);
-      if (this.caption != null) {
-        this.caption.setStyle({ fill: '#ff0' });
-      }
+      this.checked = !this.checked;
     }
   }]);
 
@@ -250,6 +231,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/**
+ * Отвечает за загрузку всех ресурсов игры.
+ * TODO тут все неаккуратно спижжено с туториала, который,
+ * в общем то не очень заботился о структуре проекта,
+ * необходимо переделать это гавно!
+ */
 var PreloadScene = function (_Phaser$Scene) {
   _inherits(PreloadScene, _Phaser$Scene);
 
@@ -342,9 +329,9 @@ var PreloadScene = function (_Phaser$Scene) {
       this.textures.addSpriteSheetFromAtlas('check', {
         atlas: 'guiElem',
         frame: 'check',
-        frameWidth: 120,
-        frameHeight: 30,
-        endFrame: 3
+        frameWidth: 26,
+        frameHeight: 26,
+        endFrame: 4
       });
     }
   }, {
@@ -655,6 +642,10 @@ var Label = exports.Label = function (_Phaser$GameObjects$T) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/**
+ * По слухам написание этой штуки в начале проекта снижает количество говнокода,
+ * но это не точно.
+ */
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -693,6 +684,10 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/**
+ * Главный класс игры, куда мы грузим настройки и сцены которые обязательно
+ * нужны в игре.
+ */
 var Game = function (_Phaser$Game) {
   _inherits(Game, _Phaser$Game);
 
@@ -713,6 +708,11 @@ var Game = function (_Phaser$Game) {
 
   return Game;
 }(Phaser.Game);
+/**
+ * Вся логика в этом движке построена на сценах.
+ * Тут мы подгружаем маленький ассет, что бы сделать красивый экран загрузки.
+ */
+
 
 var BootScene = function (_Phaser$Scene) {
   _inherits(BootScene, _Phaser$Scene);
@@ -722,12 +722,20 @@ var BootScene = function (_Phaser$Scene) {
 
     return _possibleConstructorReturn(this, (BootScene.__proto__ || Object.getPrototypeOf(BootScene)).call(this, 'Boot'));
   }
+  /**
+   * Функция подготовительного этапа и для загрузки ассетов.
+   */
+
 
   _createClass(BootScene, [{
     key: 'preload',
     value: function preload() {
-      this.load.atlas('boot', '/res/boot/boot.png', '/res/boot/boot.json');
+      this.load.atlas('boot', './res/boot/boot.png', './res/boot/boot.json');
     }
+    /**
+     * Функция при создании сцены и запуске сцены.
+     */
+
   }, {
     key: 'create',
     value: function create() {
@@ -745,6 +753,9 @@ var BootScene = function (_Phaser$Scene) {
 
 
 window.config = _config2.default;
+/**
+ * Точка входа в игру
+ */
 window.game = new Game(window.config);
 
 /***/ })
