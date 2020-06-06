@@ -1,0 +1,8 @@
+{
+	"ui": {
+		"btnPlay": "Играть",
+		"btnSettings": "Настройки",
+		"btnCredits": "Авторы",
+		"btnContinue": "Продолжить"
+	}
+}

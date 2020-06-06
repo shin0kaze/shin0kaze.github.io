@@ -1,0 +1,13 @@
+{
+	"ui": {
+		"btnPlay": "Play game",
+		"btnOptions": "Options",
+		"btnCredits": "About us",
+		"btnContinue": "Load game",
+		"btnSave": "Save",
+		"btnCancel": "Cancel",
+		"title": "stypid geim!",
+		"chkSound": "Sound",
+		"chkMusic": "Music"
+	}
+}
