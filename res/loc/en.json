@@ -6,8 +6,8 @@
 		"btnContinue": "Load game",
 		"btnSave": "Save",
 		"btnCancel": "Cancel",
-		"title": "stypid geim!",
-		"chkSound": "Sound",
-		"chkMusic": "Music"
+		"chkMusic": "Music",
+		"chkSound": "Sound"
+
 	}
 }
